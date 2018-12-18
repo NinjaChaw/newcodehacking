@@ -12,9 +12,14 @@
     <title>Admin</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="{{asset('css/app.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/blog-post.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/font-awesome.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/metisMenue.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/sb-admin-2.css')}}" rel="stylesheet">
+    <link href="{{asset('css/libs/styles.css')}}" rel="stylesheet">
 
-    <link href="{{asset('css/libs.css')}}" rel="stylesheet">
+    {{--<link href="{{asset('css/app.css')}}" rel="stylesheet">--}}
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -346,7 +351,11 @@
 <!-- /#wrapper -->
 
 <!-- jQuery -->
-<script src="{{asset('js/libs.js')}}"></script>
+<script src="{{asset('js/libs/jquery.js')}}"></script>
+<script src="{{asset('js/libs/bootstrap.js')}}"></script>
+<script src="{{asset('js/libs/metisMenu.js')}}"></script>
+<script src="{{asset('js/libs/sb-admin-2.js')}}"></script>
+<script src="{{asset('js/libs/scripts.js')}}"></script>
 
 
 @yield('footer')
