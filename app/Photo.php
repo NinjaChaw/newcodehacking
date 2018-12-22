@@ -11,4 +11,9 @@ class Photo extends Model
     public function user() {
         return $this->hasOne('App\User');
     }
+
+    protected $uploads = '/images/';
+    public function getFileAttribute($photo) {
+        return $this->uploads.$photo;
+    }
 }
