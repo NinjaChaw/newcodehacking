@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UsersEditRequest;
-use App\Http\Requests\UsersRequest;
+use App\Category;
+use App\Http\Requests\PostCreateRequesr;
 use App\Photo;
-use App\Role;
-use App\User;
+use App\Post;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
-class AdminUsersController extends Controller
+class AdminPostsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,9 +18,9 @@ class AdminUsersController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $posts = Post::all();
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
@@ -31,9 +30,9 @@ class AdminUsersController extends Controller
      */
     public function create()
     {
-        $roles = Role::all();
+        $categories = Category::all();
 
-        return view('admin.users.create', compact('roles'));
+        return view('admin.posts.create', compact('categories'));
     }
 
     /**
@@ -42,14 +41,10 @@ class AdminUsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UsersRequest $request)
+    public function store(PostCreateRequesr $request)
     {
-        if (trim($request->password) == '') {
-            $input = $request->except('password');
-        }else {
-            $input = $request->all();
-            $input['password'] = bcrypt($request->password);
-        }
+        $input = $request->all();
+        $user = Auth::user();
 
         if ($file = $request->file('photo_id')) {
             $name = time().$file->getClientOriginalName();
@@ -58,10 +53,8 @@ class AdminUsersController extends Controller
             $input['photo_id'] = $photo->id;
         }
 
-        User::create($input);
-
-//        return redirect()->route('users.index');
-        return redirect('admin/users');
+        $user->posts()->create($input);
+        return redirect('admin/posts');
     }
 
     /**
@@ -83,10 +76,10 @@ class AdminUsersController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        $roles = Role::all();
+        $post = Post::findOrFail($id);
+        $categories = Category::all();
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.posts.edit', compact('post', 'categories'));
     }
 
     /**
@@ -96,28 +89,22 @@ class AdminUsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UsersEditRequest $request, $id)
+    public function update(PostCreateRequesr $request, $id)
     {
-        $user = User::findOrFail($id);
-
-        if (trim($request->password) == '') {
-            $input = $request->except('password');
-        }else {
-            $input = $request->all();
-            $input['password'] = bcrypt($request->password);
-        }
+        $post = Post::findOrFail($id);
+        $input = $request->all();
 
         if ($file = $request->file('photo_id')) {
             $name = time().$file->getClientOriginalName();
             $file->move('images', $name);
-            $photo = Photo::create(['file'=>$name]);
-            $input['photo_id'] = $photo->id;
+            unlink(public_path().$post->photo->file);
+            $post->photo->file = $name;
         }
 
-        $user->update($input);
+        $input['photo_id'] = $post->photo->id;
 
-        return redirect()->route('users.index');
-
+        Auth::user()->posts()->whereId($id)->first()->update($input);
+        return redirect('admin/posts');
     }
 
     /**
@@ -128,14 +115,10 @@ class AdminUsersController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        $post = Post::find($id);
+        unlink(public_path().$post->photo->file);
+        $post->delete();
 
-        unlink(public_path().$user->photo->file);
-
-        $user->delete();
-
-        Session::flash('user_deleted', 'User has been deleted successfully.');
-
-        return redirect('/admin/users');
+        return redirect('admin/posts');
     }
 }
