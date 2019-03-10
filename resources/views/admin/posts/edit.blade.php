@@ -24,6 +24,7 @@
             </div>
             <div class="form-group">
                 <label for="photo_id">Image</label>
+                <img src="{{$post->photo ? $post->photo->file : ''}}" alt="" class="img-responsive">
                 <input type="file" name="photo_id">
             </div>
             <div class="form-group">

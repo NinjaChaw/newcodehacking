@@ -15,8 +15,6 @@
                 <th>Body</th>
                 <th>Created</th>
                 <th>Updated</th>
-                <th>Edit</th>
-                <th>Delete</th>
             </thead>
             <tbody>
                 @if($posts)
